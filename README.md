@@ -133,9 +133,40 @@ This additionally includes questions and assumptions and points for guiding conv
 
 ![10-infrastructure-domain](./diagrams/10-infrastructure-domain.png)
 
+- EKS based environmment, which requires a container registry, this ECR
+- ArgoCD as a preference was aded for CLI based management via infrastructure as code
+- New Relic is the recommendation solution as it is all-in-one, instead of having to combine many other thing together
+- Separate explanation available at https://github.com/jvalentino/setup-argocd
 
+## (12) Product Taxonomy
 
+![11-taxonomy](./diagrams/11-taxonomy.png)
 
+- Splits into what is typically dev and then what is typically ops, together as one team as DevOps
+- Aligns domains to underlying software components
+
+## (13) Feature and Activity Flow
+
+![12-feature-flow](./diagrams/12-feature-flow.png)
+
+- At a domain level, describes the high-level activity and features, with with their order of execution due to dependencies
+- Add, Tasks, Version, Download, Download (Client), and Upload (Client) have been colored to show that they are the primary features.
+
+## (14) Timeline: Probably, but too many unknowns
+
+![13-timeline](./diagrams/13-timeline.png)
+
+## (15) Understanding Uncertainty
+
+![14-burndown](./diagrams/14-burndown.png)
+
+## (16) Time = Scope
+
+![15-time-scope](./diagrams/15-time-scope.png)
+
+## (17) Scope Management
+
+![15-scope-management](./diagrams/15-scope-management.png)
 
 # Technical Examples
 
