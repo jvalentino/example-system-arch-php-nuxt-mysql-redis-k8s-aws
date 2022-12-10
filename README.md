@@ -170,7 +170,78 @@ This additionally includes questions and assumptions and points for guiding conv
 
 # Technical Examples
 
-TBD
+## Common Definition of Done
+
+- Updates an existing automated test, or adds a new one
+- The test automation exists at the lowest level possible
+- Does not drop unit test coverage below the threshold of 75% line coverage
+- Contains zero static code analysis issues
+- Has been deployed to the highest appropriate environment 
+- Has been peer reviewed
+- Is validated as available via logging and monitoring
+
+## Feature: Infrastructure
+
+The intention of this feature is to establish the underlying runtime environments requiring for hosting this system from a custom application and third-party middleware perspective. This additionally includes the ability to maintain, monitor, and validate that content.
+
+### Epic: [Infra] Platform
+
+Prerequisites
+
+- None
+
+The purpose of this epic is to handle the creation of the underlying application contain runtime environment. Specifically this is EKS, which means Kubernetes on AWS, whereby all setup and maintance is via CloudFormation.
+
+Epic-Level Acceptance Criteria
+
+- Environment Strategy - The intention is to confirm the environment stategy.
+- ECR CloudFormation - We need to esbtablish a container registry using ECR, which will will be done via its own repository  using CloudFormation. This is needed in order to store the container images that will be run on EKS.
+- EKS Namespaces - Via CloudFormation on a new repository, we want to estbablish a new k8s cluster using a namespace for each environment.
+- ArgoCD Installation - Via the EKS cloudFormation repository, we want to install the current version of ArgoCD. This will be used to manage deployment and configurations via the ArgoCD CLI within Gitub Actions for the pirpose of deployment pipelines.
+
+#### Story: [Infra] [Platform] Environment Strategy
+
+Prerequisites
+
+- None
+
+The intention is to confirm the environment stategy. The current proposed environment strategy at the individual application repository level is that:
+
+1. Developers do whatever work they need to locally, using wiremock where applicable to mock any dependent services, and otherwise host what they need locally in terms of supporting infrastructure using Docker.
+2. When code is commited (regardless of branch), it initiates the standard CI pipeline.
+3. When code is commited to the master/main branch, it goes through the standard CI pipeline, but upon completion publishes a new container image for the application to ECR as a new version, and then additionally tirggers DEV deployment.
+4. Deployment to DEV additionally includes integration testing to ensure an app is working with its connection points.
+5. The purpose of the DEV environment is the first place where all different domains are able to integrate.
+6. Upon successly deployment and integration testing in the DEV environment, the env-DEV tag is updated/create on the underlying reposistory to show that version (from ECR) that has been deployed there.
+7. Nightly or upon manual runtime, a pipeline for STAGE deployment is run which looks at what last when to DEV, and deploys that container version to the STAGE environment. At a minimum this includes a smoke test to ensure it came on, and when applicable automated journey testing. 
+8. Upon successly deployment and  testing in the STAGE environment, the env-STAGE tag is updated/create on the underlying reposistory to show that version (from ECR) that has been deployed there.
+9. Upon manual runtime, a pipeline for PROD deployment is run which looks at what last when to STAGE, and deploys that container version to the PROD environment. At a minimum this includes a smoke test to ensure it came on.
+10. Upon successly deployment and  testing in the PROD environment, the env-PROD tag is updated/create on the underlying reposistory to show that version (from ECR) that has been deployed there.
+
+Acceptance Criteria
+
+- That there is consensus on the environment strategy, or that it is changed in order to reach that consensus.
+
+#### Story: [Infra] [Platform] ECR CloudFormation
+
+Prerequsites
+
+- Story: [Infra] [Platform] Environment Strategy
+
+References:
+
+- https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecr-repository.html#aws-resource-ecr-repository--examples
+- https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/sdk-general-information-section.html
+- https://towardsaws.com/build-push-docker-image-to-aws-ecr-using-github-actions-8396888a8f9e
+
+We need to esbtablish a container registry using ECR, which will will be done via its own repository  using CloudFormation. This is needed in order to store the container images that will be run on EKS. The inteintion is to both create and maintain this ECR via config as code and pipelines, so that it isn't something that requires continually command-line level manual intervention.
+
+Acceptance Criteria
+
+- Creation of a new source code repository with the intention of containing the CloudFormation settings for setting up and otherwise  maintaining a new ECR.
+- The creation of a build automation in an agreed upon technology stack, which is able to use the CloudFormation SDK to create the ECR
+- The execution of that build automation upon code change, using GitHub Actions.
+- Demonstration using a "Hello World" style project as its own repository, that pushes a new image version to that ECR where it is then available.
 
 # References
 
