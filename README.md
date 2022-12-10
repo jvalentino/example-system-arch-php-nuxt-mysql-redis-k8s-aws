@@ -44,6 +44,97 @@ Consider that I build such examples based on other research and supporting proje
 
 This additionally includes questions and assumptions and points for guiding conversations.
 
+## (1) Highest-Level System Needs
+
+![01-mindmap](./diagrams/01-mindmap.png)
+
+- The only two specific asks are for Document Management and Custom Client Integration
+- Implicity we know we need a means of managing users, incombination with the infrastructure for hosting any web accessible solution
+
+## (2) "Need" Dependencies
+
+![02-dependencies](./diagrams/02-dependencies.png)
+
+- Implementicy everyone of the high-level needs depends on something
+- We can't pull client documents into our system, with the means of being able to manage documents
+- We can't manage document without underyling associated accounts with appropriate authorization
+- We can't do anytyhing of this without underlying infrastructure 
+
+## (3) User Interface Perspective
+
+![03-user-interface-pers](./diagrams/03-user-interface-pers.png)
+
+- Users generally will only understand for that which they directly interact.
+- Those points of interaction are always some soft of graphical user interface
+- Now is a good time to ask what our interfaces are, as that will in a major way shape the scope of what we are building
+- Additionally, the number of users intended to operate will also shape the underlying architure. Dealing with more than 10k concurrent users will require some specific web-scale strategies.
+
+## (4) MVP
+
+![04-mvp](./diagrams/04-mvp.png)
+
+- We want to build the most minimal thing possible, and get it in the hards of the user
+- So far looking at the needs, it is shaping up to be these 4 domains all running on top of the infrastructure domain
+
+## (5) Architectural Design Principales
+
+- Domain Driven Design
+- Microservices
+- High Availability
+- Fault Tolernt
+- Defense in Depath
+- Backend for Frontend
+- Cloud First
+- Contract Driven Design (Swagger)
+
+## (6) Contacts and Paths of Communication
+
+![06-contract-comms](./diagrams/06-contract-comms.png)
+
+- Encryption in flight is standard
+- Only the services which much talk to the public internet are expozed to it (DMZ)
+- Interval services use certificate based authorization
+- Domaon boundaries are quantified by Swapper API specifications for REST
+
+## (7) Domain: Web Portal
+
+![05-web-portal-domain](./diagrams/05-web-portal-domain.png)
+
+- A distributed cache is needed to maintain BFF session tokens, so that we dont' have to use sticky sessions
+- BFF pattern is used for the Web Portal's Backend
+- AWS secret manager is used for secret retrieval 
+- ElasticCache is used as a Redis SaaS offering
+- The Web BFF communicates with the other domains via REST per the appropriate Swagger API
+
+## (8) The important of Dev/Test is isolation
+
+![07-isolate-web-domain](./diagrams/07-isolate-web-domain.png)
+
+- There are two basic needs for us to be able to work independently (without other domains or services being done), and to be able to test in isolation
+- Wiremock can take in swagger specs to mock behavior.
+
+## (9) User and Document Domains
+
+![08-other-domains](./diagrams/08-other-domains.png)
+
+- Both of these domains are a means of separating document related logic from user related logic
+- While it is possible to maintain this in a single codebase, it can end up being harder to decouple after the fact
+- Also consider that will likely be other domains in the future, so it is good to start the practice and prove it out
+
+## (10) Domain: Custom Client Integration
+
+![09-client-int-domain](./diagrams/09-client-int-domain.png)
+
+- There are important unanswered questions that will fundemtnally shape this archicture
+- An assumption was made to use OneDrive and its REST and Webhook API to show how this could look
+- There are many other potential options
+
+## (11) Domain: Infrastructure
+
+![10-infrastructure-domain](./diagrams/10-infrastructure-domain.png)
+
+
+
 
 
 # Technical Examples
